@@ -8,6 +8,8 @@ dotenv.config({path: path.join(process.cwd() , '.env')})
 const app = express();
 const port = 5000;
 
+app.use(express.json())
+
 const pool  = new Pool({
   connectionString : `${process.env.CONNECTION_STR
   }`
@@ -28,6 +30,7 @@ const initDb = async() =>{
     await pool.query(`
       CREATE TABLE IF NOT EXISTS vehicles(
       id SERIAL PRIMARY KEY,
+      vehicle_name VARCHAR(20) NOT NULL,
       type VARCHAR(20) NOT NULL CHECK (type IN ('car', 'bike','van' , 'SUV')),
       registration_number VARCHAR(100) UNIQUE NOT NULL,
       daily_rent_price NUMERIC(10, 2) NOT NULL
@@ -49,6 +52,214 @@ const initDb = async() =>{
 }
 
 initDb()
+
+
+//Users Table
+app.get("/users" , async(req:Request, res: Response) =>{
+
+  try {
+    const result = await pool.query(`SELECT * FROM users`)
+
+    res.status(200).json({
+      success:true,
+      message:"All User retrived successfully",
+      data: result.rows[0]
+    })
+    
+  } catch (err:any) {
+    res.status(500).json({
+      success:false,
+      message: err.message
+    })
+  }
+})
+
+app.put("/users/:id" , async(req:Request ,  res:Response) =>{
+
+  const {name, email ,phone, role} = req.body
+
+  try {
+    const result = await pool.query(`UPDATE users SET name=$1, email=$2 , phone=$3 , role=$4 WHERE id=$5 RETURNING * `, [name, email, phone, role ,  req.params.id] )
+
+    if(result.rows.length ===0 ){
+      res.json(500).json({
+        success:false,
+      message: "Can;t Update"
+      })
+    }else{
+      res.json(200).json({
+      success:true,
+      message: "Updated user successfully"
+      })
+    }
+
+    
+  } catch (err:any) {
+    res.status(500).json({
+      success:false,
+      message: err.message
+    })
+  }
+})
+
+app.delete("/users/:id" , async(req:Request , res: Response) =>{
+  try {
+    const result = await pool.query(`SELECT * FROM users WHERE id=$1`, [req.params.id])
+
+    if(result.rowCount= 0){
+      res.status(500).json({
+        success:false,
+      message: "Can't Delete user"
+      })
+    }else{
+      res.status(200).json({
+      success:true,
+      message: "User Deleted Successfully"
+      })
+    }
+    
+  } catch (err:any) {
+    res.status(500).json({
+      success:false,
+      message: err.message
+    })
+  }
+})
+
+//Vehicles Table
+
+app.post("/vehicles" , async (req:Request, res:Response) =>{
+
+  const {vehicle_name , type, registration_number, daily_rent_price,  availability_status  } = req.body
+  try {
+    const result = await pool.query(`INSERT INTO vehicles(vehicle_name, type, registration_number, daily_rent_price, availability_status) VALUES($1, $2, $3, $4, $5) RETURNING *` , [vehicle_name, type, registration_number, daily_rent_price,availability_status])
+
+    if(result.rows.length ===0){
+      res.status(500).json({
+        success:false,
+        message:"Can't Post Data"
+      })
+    }else{
+      res.status(200).json({
+        success:true,
+        message:"Data posted succesfully",
+        data: result.rows[0]
+      })
+    }
+    
+  } catch (err:any) {
+    res.status(500).json({
+      success:false,
+      message: err.message
+    })
+  }
+})
+
+app.get("/vehicles" ,  async(req:Request, res:Response) =>{
+  try {
+    const result = await pool.query(`SELECT * FROM vehicles`)
+
+    if(result.rows.length ===0){
+      res.status(500).json({
+        status:false,
+        "message":"Can't Get User"
+      })
+    }else{
+      res.status(200).json({
+        success:true,
+        message:"User retrived successfully",
+        data: result.rows[0]
+      })
+    }
+    
+  } catch (err:any) {
+    res.status(500).json({
+      status:false,
+      message:err.message
+    })
+  }
+})
+
+app.get("/vehicles/:id" , async(req:Request, res:Response) =>{
+  try {
+    const result = await pool.query(`SELECT * FROM vehicles WHERE id=$1` , [req.params.id])
+
+     if(result.rows.length ===0){
+      res.status(500).json({
+        status:false,
+        "message":"Can't Get Any User"
+      })
+    }else{
+      res.status(200).json({
+        success:true,
+        message:"Users retrived successfully",
+        data: result.rows[0]
+      })
+    }
+
+    
+  } catch (err:any) {
+    res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+})
+
+app.put("/vehicles/:id" , async(req:Request, res:Response) =>{
+  const {vehicle_name, type, registration_number ,daily_rent_price, availability_status} = req.body
+  try {
+    const result = await pool.query(`UPDATE vehicles SET vehicle_name=$1, type=$2 , registration_number=$3 , daily_rent_price=$4 , availability_status=$5  WHERE id=$6  RETURNING *` ,[vehicle_name,type, registration_number, daily_rent_price, availability_status, req.params.id])
+
+      if(result.rows.length ===0){
+      res.status(500).json({
+        status:false,
+        "message":"Can't update User"
+      })
+    }else{
+      res.status(200).json({
+        success:true,
+        message:"Users updated successfully",
+        data: result.rows[0]
+      })
+    }
+
+
+    
+  } catch (err:any) {
+    res.status(500).json({
+        success:false,
+        message:err.message
+      })
+  }
+})
+
+app.delete("/vehicles/:id" , async(req:Request , res:Response) =>{
+  try {
+
+    const result = await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [req.params.id])
+
+    if(result.rowCount ==0){
+       res.status(500).json({
+        status:false,
+        "message":"Can't Delete User"
+      })
+    }else{
+      res.status(200).json({
+        success:true,
+        message:"Users Deleted successfully",
+        data: result.rows[0]
+      })
+    }
+    
+  } catch (err:any) {
+      res.status(500).json({
+        success:false,
+        message:err.message
+      })
+  }
+})
+
 
 //parser
 app.use(express.json())
