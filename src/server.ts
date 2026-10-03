@@ -1,23 +1,21 @@
 import  express, { Request, Response }  from 'express';
-import {Pool} from "pg"
 import config from './config/index.js';
 import initDb from './config/db.js';
 import logger from './middlewear/logger.js'
 import { userRoutes } from './modules/users/user.routes.js';
 import { vehicleRoutes } from './modules/vehicles/vehicles.routes.js';
-
-
+import { authRoutes } from './modules/auth/auth.routes.js';
 
 const app = express();
 const port = config.port
 
 app.use(express.json())
 
-const pool  = new Pool({
-  connectionString :`${config.connectionStr}`
-})
-
 initDb()
+
+
+//parser
+app.use(express.json())
 
 //Users Crud
 app.use("/api/v1/users" , userRoutes )
@@ -25,9 +23,9 @@ app.use("/api/v1/users" , userRoutes )
 //Vehicles Crud
 app.use("/api/v1/vehicles" , vehicleRoutes)
 
+//Authentication
+app.use("/api/v1/auth" , authRoutes)
 
-//parser
-app.use(express.json())
 
 
 app.get('/',logger, (req:Request, res:Response) => {
