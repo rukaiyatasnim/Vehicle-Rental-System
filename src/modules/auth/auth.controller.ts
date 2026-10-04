@@ -6,6 +6,7 @@ const createUser = async(req:Request, res:Response) =>{
     try {
 
         const result = await authServices.createUser(req.body)
+
     
 
         if(result.rows.length=== 0){
@@ -31,6 +32,7 @@ const createUser = async(req:Request, res:Response) =>{
 
 const loginUser = async(req:Request, res:Response) =>{
     try {
+        
     const result = await authServices.loginUser(req.body )
 
 

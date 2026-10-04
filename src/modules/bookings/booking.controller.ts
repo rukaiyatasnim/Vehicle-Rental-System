@@ -48,7 +48,7 @@ const updateBooking = async(req:Request, res:Response) => {
     try {
 
         const result = await bookingService.updateBooking(
-            req.params.bookingId as string,
+            req.params.id as string,
             req.user?.id as string,
             req.user?.role as string
         )

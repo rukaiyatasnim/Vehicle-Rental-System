@@ -17,7 +17,6 @@ const auth = (...roles : string[]) =>{
         }
 
         const decoded = jwt.verify(token , config.jwtSecret as string) as JwtPayload
-        console.log({decoded}),
 
         req.user = decoded 
 

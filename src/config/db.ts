@@ -6,6 +6,7 @@ export const pool  = new Pool({
   connectionString : `${config.connectionStr}`
 })
 
+
 const initDb = async() =>{
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users(
@@ -40,6 +41,7 @@ const initDb = async() =>{
         status VARCHAR(20) NOT NULL CHECK (status IN ('active', 'cancelled' ,'returned'))
         )
         `)
+
 }
 
 

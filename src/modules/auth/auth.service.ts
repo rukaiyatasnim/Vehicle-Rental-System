@@ -21,6 +21,8 @@ const loginUser = async(data:any) =>{
 
     const result = await pool.query(`SELECT * FROM users WHERE email=$1`, [email])
 
+
+
     if(result.rows.length ===0){
         return null
     }
@@ -35,7 +37,7 @@ const loginUser = async(data:any) =>{
 
     const secret = config.jwtSecret
 
-    const token = jwt.sign({name: user.name, email: user.email , role: user.role}, secret as string, {
+    const token = jwt.sign({    id: user.id, name: user.name, email: user.email , role: user.role}, config.jwtSecret as string, {
         expiresIn: "7d"
     } )
 

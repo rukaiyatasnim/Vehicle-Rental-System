@@ -24,18 +24,19 @@ const updateUser =  async(req:Request ,  res:Response) =>{
 
     
   try {
-
-     if(req?.user?.role !=="admin" && req?.user?.role !== Number(req.params.id)){
-      res.status(403).json({
+console.log("USER:", req.user)
+console.log("PARAM ID:", req.params.id)
+  if(req?.user?.role !== "admin" && req?.user?.id !== Number(req.params.id)){
+    return res.status(403).json({
         success:false,
-        message:" You can only update your own profile"
-      })
-    }
+        message:"You can only update your own profile"
+    })
+}
 
     const result = await userServices.updateUser(req.body, req.params.id as string)
 
     if(result.rows.length ===0 ){
-      res.status(500).json({
+      res.json(500).json({
         success:false,
       message: "Can;t Update"
       })
