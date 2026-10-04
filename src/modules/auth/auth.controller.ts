@@ -4,9 +4,9 @@ import { authServices } from "./auth.service.js";
 const createUser = async(req:Request, res:Response) =>{
 
     try {
-        console.log(req)
+
         const result = await authServices.createUser(req.body)
-        console.log(result)
+    
 
         if(result.rows.length=== 0){
             res.status(500).json({
@@ -31,7 +31,8 @@ const createUser = async(req:Request, res:Response) =>{
 
 const loginUser = async(req:Request, res:Response) =>{
     try {
-    const result = await authServices.loginUser(req.body)
+    const result = await authServices.loginUser(req.body )
+
 
     res.status(200).json({
         success:true,

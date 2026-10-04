@@ -5,6 +5,7 @@ import logger from './middlewear/logger.js'
 import { userRoutes } from './modules/users/user.routes.js';
 import { vehicleRoutes } from './modules/vehicles/vehicles.routes.js';
 import { authRoutes } from './modules/auth/auth.routes.js';
+import { bookingRoutes } from './modules/bookings/booking.routes.js';
 
 const app = express();
 const port = config.port
@@ -25,6 +26,9 @@ app.use("/api/v1/vehicles" , vehicleRoutes)
 
 //Authentication
 app.use("/api/v1/auth" , authRoutes)
+
+//Bookings
+app.use("/api/v1/bookings" , bookingRoutes  )
 
 
 
